@@ -3,6 +3,20 @@
 # find script
 
 
+
+# Set defaults 
+
+MEDIADRIVE=""
+SOURCEDIR=""
+SOURCEMUSIC=""
+DESTDIR=""
+HOLDINGPEN=""
+PLEXDIR=""
+PLEXMUSICDIR=""
+
+# Load config values
+source config.conf
+
 # Load configuration file
 # TODO: source is not secure as it will execute arbitrary code
 source /Users/ashleyrobinson/ArrestingDevelopment/scripts/config
