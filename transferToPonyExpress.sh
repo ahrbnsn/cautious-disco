@@ -36,10 +36,6 @@ sendToLibrary () {
     find . -depth -type d -empty -delete
     echo "Clean Up Complete"
 
-    echo "Syncing iTunes"
-    rsync -rtP --update $SOURCEMUSIC $PLEXMUSICDIR
-    echo "Music Synced"
-
     echo "Deploying Filebot"
     ssh $PONY "/usr/local/bin/filebot -script fn:amc $DESTDIR --output $HOLDINGPEN --action move -non-strict  --def excludeList=amc.txt "seriesFormat={plex}" "movieFormat=Movies/{ny}/{fn}" unsorted=y clean=y --log-file "$LOGFILE"
 "
@@ -51,6 +47,17 @@ sendToLibrary () {
 
 }
 
+
+# alias: deliveryM
+# Syncs iTunes music library and calls sendToLibrary
+
+syncMusic () {
+  echo "Syncing iTunes"
+  rsync -rtP --update $SOURCEMUSIC $PLEXMUSICDIR
+  echo "Music Synced"
+
+  sendToLibrary
+}
 
 #alias: loadPlex
 
