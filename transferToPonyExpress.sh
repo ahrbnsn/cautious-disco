@@ -13,20 +13,17 @@ DESTDIR=""
 HOLDINGPEN=""
 PLEXDIR=""
 PLEXMUSICDIR=""
+LOGFILE=""
+PONY=""
 
 
 # Load configuration file
-# TODO: source is not secure as it will execute arbitrary code
 source /Users/ashleyrobinson/ArrestingDevelopment/scripts/config
 
 
-# Checks to see if hard drive is attached; transfers files
-#  &  sics filebot on them
-
-
-# Moves files to a seperate directory for review before sending to Plex folder 
-# Filebot occasionally messes up catergorization
-
+# Checks to see if hard drive is available; transfers files
+#  &  sics filebot on them.
+#
 
 # alias: delivery
 
@@ -44,14 +41,16 @@ sendToLibrary () {
     echo "Music Synced"
 
     echo "Deploying Filebot"
-    /usr/local/bin/filebot -script fn:amc $DESTDIR --output $HOLDINGPEN --action move -non-strict  --def excludeList=amc.txt "seriesFormat={plex}" "movieFormat=Movies/{ny}/{fn}" unsorted=y clean=y --log-file "/Volumes/Librarian/dispatch.txt"
+    ssh $PONY "/usr/local/bin/filebot -script fn:amc $DESTDIR --output $HOLDINGPEN --action move -non-strict  --def excludeList=amc.txt "seriesFormat={plex}" "movieFormat=Movies/{ny}/{fn}" unsorted=y clean=y --log-file "$LOGFILE"
+"
 
 
   else
-    echo "It's not mounted."
+    echo "Librarian unavailable."
   fi
 
 }
+
 
 #alias: loadPlex
 
@@ -65,7 +64,7 @@ sendToPlex () {
 
 
    else
-    echo "It's not mounted."
+    echo "Librarian is out to lunch."
   fi
 
 
