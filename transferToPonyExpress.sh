@@ -18,7 +18,7 @@ PONY=""
 
 
 # Load configuration file
-source /Users/ashleyrobinson/ArrestingDevelopment/scripts/config
+source $HOME/ArrestingDevelopment/scripts/config
 
 
 # Checks to see if hard drive is available; transfers files
@@ -37,8 +37,9 @@ sendToLibrary () {
     echo "Clean Up Complete"
 
     echo "Deploying Filebot"
-    ssh $PONY "/usr/local/bin/filebot -script fn:amc $DESTDIR --output $HOLDINGPEN --action move -non-strict  --def excludeList=amc.txt "seriesFormat={plex}" "movieFormat=Movies/{ny}/{fn}" unsorted=y clean=y --log-file "$LOGFILE"
-"
+    ssh $PONY "/usr/local/bin/filebot -script fn:amc $DESTDIR --output $HOLDINGPEN --action move -non-strict  --def excludeList=amc.txt "seriesFormat={plex}" "movieFormat=Movies/{ny}/{fn}" unsorted=y clean=y --log-file "$LOGFILE" "
+
+    cd $OLDPWD
 
 
   else
@@ -76,6 +77,7 @@ sendToPlex () {
 
 
 }
+
 
 #http://stackoverflow.com/questions/8818119/linux-how-can-i-run-a-function-from-a-script-in-command-line
 
