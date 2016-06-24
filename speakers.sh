@@ -9,7 +9,9 @@ PONY=""
 # Load configuration file
 source $HOME/ArrestingDevelopment/scripts/config
 
-function speakers() {
+speakers() {
+
+  # Commands: on, off, -v [integer 0-100], mute, volume, up, down
 
   volume=""
   
@@ -18,64 +20,77 @@ function speakers() {
 
   }
 
-  if [ "$1" = "on" ]; then
-    volume="30"
-    login "open -a 'Airfoil Speakers' && osascript -e 'set volume output volume 30'"
-    echo "Speakers on"
+  case "$1" in 
 
-  elif [ "$1" = "off" ]; then
-    volume="0"
-    login "osascript -e 'quit app \"Airfoil Speakers\"'"
-    echo "Speakers off"
+    # Turns speakers on and sets volume to medium level
+    on) volume="40"
+        login "open -a 'Airfoil Speakers' && osascript -e 'set volume output volume 40'"
+        osascript -e "tell application \"Airfoil\"" \
+          -e "repeat until speaker \"PonyExpress\" exists" \
+          -e "end repeat"\
+          -e  "connect to speaker \"PonyExpress\"" \
+          -e "end tell"\
+        echo "Speakers on"
+        ;;
 
-  #control the volume 0-100
-  elif [ "$1" = "-v" ]; then
-    volume=$2
-    login "osascript -e 'set volume output volume $2'"
+    # Turns speakers off
+    off) volume="0"
+         login "osascript -e 'quit app \"Airfoil Speakers\"'"
+         echo "Speakers off"
+         ;;
 
+    # Sets volume by integer
+    # TODO: Check that $2 is between 0-100
+    -v) volume=$2
+        login "osascript -e 'set volume output volume $2'"
+        echo "Speakers volume $2"
+        ;;
 
-  elif [ "$1" = "mute" ]; then
-    volume="0"
-    login "osascript -e 'set Volume 0'"
+    # Mutes Speakers
+    mute) volume="0"
+          login "osascript -e 'set Volume 0'"
+          ;;
 
-  elif [ "$1" = "volume" ]; then
-    login "osascript -e 'output volume of (get volume settings)'"
+    # Tells the current volume 
+    volume) login "osascript -e 'output volume of (get volume settings)'"
+            ;;
 
-  elif [ "$1" = "up" ]; then
-    volume=$(login "osascript -e 'output volume of (get volume settings)'")
-    volume=$((volume+20));
+    # Turns volume up by 20
+    # TODO: accept a third value to tinker with increments
+    up) volume=$(login "osascript -e 'output volume of (get volume settings)'")
+        volume=$((volume+20));
 
-    if [ "$volume" -lt "100" ]; then
-      login "osascript -e 'set volume output volume $volume'"
-      echo "Volume set at $volume"
+        if [ "$volume" -lt "100" ]; then
+          login "osascript -e 'set volume output volume $volume'"
+          echo "Volume set at $volume"
 
-    else
-      volume="100"
-      login "osascript -e 'set volume output volume 100'"
-      echo "Volume maxed"
+        else
+          volume="100"
+          login "osascript -e 'set volume output volume 100'"
+          echo "Volume maxed"
 
-    fi
+        fi
+        ;;
 
-  elif [ "$1" = "down" ]; then
-    volume=$(login "osascript -e 'output volume of (get volume settings)'")
-    volume=$((volume-20));
+    # Turns volume down by 20
+    # Should also accept a third argument for incremental adjustments
+    down) volume=$(login "osascript -e 'output volume of (get volume settings)'")
+          volume=$((volume-20));
 
-    if [ "$volume" -gt "0" ]; then
-      login "osascript -e 'set volume output volume $volume'"
-      echo "Volume set at $volume"
+          if [ "$volume" -gt "0" ]; then
+            login "osascript -e 'set volume output volume $volume'"
+            echo "Volume set at $volume"
 
-    else
-      volume="0"
-      login "osascript -e 'set volume output volume 0'"
-      echo "Muted"
+          else
+            volume="0"
+            login "osascript -e 'set volume output volume 0'"
+            echo "Muted"
 
-    fi
+          fi
+          ;;
+  esac    
 
-
-
-
-  else
-    echo "Specify '-on' or '-off'"
-
-  fi
 }
+
+
+
